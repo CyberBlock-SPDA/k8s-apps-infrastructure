@@ -3,3 +3,6 @@ kind: Kustomization
 namespace: team-1
 resources:
   - hello-world.yaml
+  - chart.yaml
+  - images.yaml
+  - automation.yaml

@@ -1,0 +1,59 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: apps-infra-chart
+  namespace: team-1
+  labels:
+    app.kubernetes.io/part-of: k8s-apps-infrastructure
+spec:
+  interval: 10m
+  url: oci://ghcr.io/CyberBlock-SPDA/k8s-apps-infrastructure
+  ref:
+    semver: ">=0.1.0 <2.0.0"
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  secretRef:
+    name: ghcr-read
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: apps-infra
+  namespace: team-1
+  labels:
+    app.kubernetes.io/part-of: k8s-apps-infrastructure
+spec:
+  interval: 10m
+  timeout: 5m
+  serviceAccountName: team-1-deployer
+  targetNamespace: team-1
+  chartRef:
+    kind: OCIRepository
+    name: apps-infra-chart
+    namespace: team-1
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  driftDetection:
+    mode: enabled
+  maxHistory: 5
+  values:
+    backend:
+      image:
+        repository: ghcr.io/CyberBlock-SPDA/matchmaking-service # {"$imagepolicy": "team-1:backend-service:name"}
+        tag: "0.1.0" # {"$imagepolicy": "team-1:backend-service:tag"}
+      serviceAccount:
+        create: false
+        name: backend-service
+    clientWeb:
+      image:
+        repository: ghcr.io/CyberBlock-SPDA/client-web # {"$imagepolicy": "team-1:client-web:name"}
+        tag: "0.1.0" # {"$imagepolicy": "team-1:client-web:tag"}
+    gameStreamer:
+      image:
+        repository: ghcr.io/CyberBlock-SPDA/game-streamer # {"$imagepolicy": "team-1:game-streamer:name"}
+        tag: "0.1.0" # {"$imagepolicy": "team-1:game-streamer:tag"}

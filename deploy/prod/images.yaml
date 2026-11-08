@@ -1,0 +1,86 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: backend-service
+  namespace: team-1
+  labels:
+    app.kubernetes.io/part-of: k8s-apps-infrastructure
+spec:
+  image: ghcr.io/CyberBlock-SPDA/matchmaking-service
+  interval: 5m
+  secretRef:
+    name: ghcr-read
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: backend-service
+  namespace: team-1
+  labels:
+    app.kubernetes.io/part-of: k8s-apps-infrastructure
+spec:
+  imageRepositoryRef:
+    name: backend-service
+  interval: 5m
+  digestReflectionPolicy: Always
+  policy:
+    semver:
+      range: "<2.0.0"
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: client-web
+  namespace: team-1
+  labels:
+    app.kubernetes.io/part-of: k8s-apps-infrastructure
+spec:
+  image: ghcr.io/CyberBlock-SPDA/client-web
+  interval: 5m
+  secretRef:
+    name: ghcr-read
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: client-web
+  namespace: team-1
+  labels:
+    app.kubernetes.io/part-of: k8s-apps-infrastructure
+spec:
+  imageRepositoryRef:
+    name: client-web
+  interval: 5m
+  digestReflectionPolicy: Always
+  policy:
+    semver:
+      range: "<2.0.0"
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: game-streamer
+  namespace: team-1
+  labels:
+    app.kubernetes.io/part-of: k8s-apps-infrastructure
+spec:
+  image: ghcr.io/CyberBlock-SPDA/game-streamer
+  interval: 5m
+  secretRef:
+    name: ghcr-read
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: game-streamer
+  namespace: team-1
+  labels:
+    app.kubernetes.io/part-of: k8s-apps-infrastructure
+spec:
+  imageRepositoryRef:
+    name: game-streamer
+  interval: 5m
+  digestReflectionPolicy: Always
+  policy:
+    semver:
+      range: "<2.0.0"

@@ -1,0 +1,44 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: apps-infra-write
+  namespace: team-1
+  labels:
+    app.kubernetes.io/part-of: k8s-apps-infrastructure
+spec:
+  interval: 5m
+  url: ssh://git@github.com/CyberBlock-SPDA/k8s-apps-infrastructure
+  ref:
+    branch: main
+  secretRef:
+    name: apps-infra-git-write
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: apps-infra-image-updates
+  namespace: team-1
+  labels:
+    app.kubernetes.io/part-of: k8s-apps-infrastructure
+spec:
+  interval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: apps-infra-write
+  policySelector:
+    matchLabels:
+      app.kubernetes.io/part-of: k8s-apps-infrastructure
+  update:
+    path: ./deploy/prod
+    strategy: Setters
+  git:
+    checkout:
+      ref:
+        branch: main
+    push:
+      branch: main
+    commit:
+      author:
+        name: Flux Image Automation
+        email: flux-image-automation@users.noreply.github.com
+      messageTemplate: "chore(images): update image tags"
