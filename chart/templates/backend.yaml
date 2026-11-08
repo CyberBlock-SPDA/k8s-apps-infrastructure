@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-service
+  labels:
+    {{- include "k8s-apps-infrastructure.labels" . | nindent 4 }}
+    app.kubernetes.io/name: backend-service
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: backend-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: backend-service
+    spec:
+      serviceAccountName: {{ .Values.backend.serviceAccount.name }}
+      containers:
+        - name: backend-service
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          ports:
+            - name: http
+              containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  labels:
+    {{- include "k8s-apps-infrastructure.labels" . | nindent 4 }}
+    app.kubernetes.io/name: backend-service
+spec:
+  selector:
+    app.kubernetes.io/name: backend-service
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

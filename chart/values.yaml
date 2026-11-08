@@ -1,0 +1,20 @@
+backend:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/CyberBlock-SPDA/matchmaking-service
+    tag: "0.1.0"
+  serviceAccount:
+    create: false
+    name: backend-service
+
+clientWeb:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/CyberBlock-SPDA/client-web
+    tag: "0.1.0"
+
+gameStreamer:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/CyberBlock-SPDA/game-streamer
+    tag: "0.1.0"
